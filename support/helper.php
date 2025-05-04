@@ -2,34 +2,71 @@
 
 use Slim\Views\PhpRenderer;
 
-if(!method_exists('view')){
-
+if(!function_exists('view')){
     function view($response, $template, $data){
-        $renderer = new PhpRenderer(APP_PATH);
+        $renderer = new PhpRenderer(APP_PATH . 'pages/');
+
+        $template = rtrim($template, '/');
+
         return $renderer->render($response, $template, $data);
     }
 }
 
-if(!method_exists('config')){
-
+if(!function_exists('config')){
     function config($configFile){
-        return include(CONFIG_PATH . '/' . $configFile);
-    }
 
+        $configFile = rtrim($configFile, '/');
+
+        return include(CONFIG_PATH . $configFile);
+    }
 }
 
-if(!method_exists('route')){
+if(!function_exists('component')){
+    function component($path){
+        $componentPath = APP_PATH . 'components/';
 
-    function route(){
-        
+        $path = rtrim($path, '/');
+
+        return include($componentPath . $path);
     }
-
 }
 
-if(!method_exists('asset')){
+if(!function_exists('url')){
+    function url(string $path) : void 
+    {
+        $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
 
-    function asset(){
-        
+        $domain = $_SERVER['HTTP_HOST'];
+
+        $baseUrl = $protocol . '://' . $domain;
+
+        if( empty( $path ) ){
+            echo $baseUrl;
+        }
+
+        $cleanPath = ltrim($path, '/');
+
+        echo $baseUrl  . '/' . $cleanPath ;
     }
+}
 
+if(!function_exists('asset')){
+    function asset(string $path) : void 
+    {
+        $assetFolder = '/assets';
+
+        $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+    
+        $domain = $_SERVER['HTTP_HOST'];
+    
+        $baseUrl = $protocol . '://' . $domain;
+    
+        if( empty( $path ) ){
+            echo $baseUrl;
+        }
+    
+        $cleanPath = ltrim($path, '/');
+    
+        echo $baseUrl . $assetFolder . '/' . $cleanPath ;
+    }
 }
